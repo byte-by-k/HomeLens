@@ -1,0 +1,13 @@
+BUYER PROFILE
+{buyer_profile}
+
+PROPERTY INFORMATION
+{property_information}
+
+KNOWN CONCERNS
+{known_concerns}
+
+ANALYSIS REQUEST
+Evaluate how well this property fits this buyer. Provide an explainable score and
+recommendation, explicitly identify unmet preferences, risks, missing information,
+and assumptions, and give exactly five questions for the listing agent.

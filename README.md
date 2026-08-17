@@ -64,6 +64,7 @@ property_lookup.py     RentCast lookup and response normalization
 mortgage_calculator.py Standard amortization and itemized cost calculations
 validation.py          Deterministic input validation
 home_analysis_chain.py Prompt, ChatOpenAI configuration, and LCEL chain
+prompts/                External system and human prompt templates
 models.py              Pydantic output contract
 tests/                 Unit tests with no live model requests
 ```
@@ -87,7 +88,10 @@ the required schema. The application never manually parses a free-form answer.
 
 ## ChatPromptTemplate
 
-The prompt has two separate messages:
+The prompt text lives in `prompts/system_prompt.txt` and
+`prompts/human_prompt.txt`. The chain loads these files relative to its own source
+location, so it works locally and after deployment. The prompt has two separate
+messages:
 
 - The **system message** establishes the impartial role, evidence boundaries,
   relevant decision criteria, and responsible-AI restrictions.

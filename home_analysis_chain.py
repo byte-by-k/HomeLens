@@ -2,6 +2,7 @@
 
 import json
 import os
+from pathlib import Path
 from typing import Any
 
 from langchain_core.prompts import ChatPromptTemplate
@@ -11,46 +12,24 @@ from langchain_openai import ChatOpenAI
 from models import HomeAnalysis
 
 
-SYSTEM_PROMPT = """You are an impartial home-buying research assistant.
+PROMPTS_DIRECTORY = Path(__file__).resolve().parent / "prompts"
 
-Compare one property against the buyer preferences supplied by the user. Use only
-the supplied information. Never invent, retrieve, or assume missing property facts.
-Clearly separate user-provided facts, missing information, and assumptions. Explain
-why the property does or does not fit the buyer.
 
-Consider price, bedrooms, bathrooms, property age, taxes, HOA fees, schools,
-commute, size, maintenance concerns, and must-have features. Treat a listing URL
-as reference text only; do not open it or claim to have verified it.
-
-Do not make conclusions based on protected characteristics or infer neighborhood
-demographics. Do not guarantee investment returns, future property value, school
-quality, safety, or outcomes. Return exactly five useful questions for the listing
-agent. Put every unknown fact that could materially affect the decision in
-missing_information. Assumptions must never be presented as facts.
-
-The final assessment must explain the recommendation. The disclaimer must state
-that the analysis is informational and is not financial, legal, appraisal,
-inspection, mortgage, or real-estate advice."""
-
-HUMAN_PROMPT = """BUYER PROFILE
-{buyer_profile}
-
-PROPERTY INFORMATION
-{property_information}
-
-KNOWN CONCERNS
-{known_concerns}
-
-ANALYSIS REQUEST
-Evaluate how well this property fits this buyer. Provide an explainable score and
-recommendation, explicitly identify unmet preferences, risks, missing information,
-and assumptions, and give exactly five questions for the listing agent."""
+def load_prompt(filename: str) -> str:
+    """Load a UTF-8 prompt stored alongside the application source."""
+    prompt_path = PROMPTS_DIRECTORY / filename
+    try:
+        return prompt_path.read_text(encoding="utf-8").strip()
+    except OSError as exc:
+        raise RuntimeError(f"Unable to load prompt file: {prompt_path}") from exc
 
 
 def create_prompt() -> ChatPromptTemplate:
     """Create the readable two-message prompt used by the analysis chain."""
+    system_prompt = load_prompt("system_prompt.txt")
+    human_prompt = load_prompt("human_prompt.txt")
     return ChatPromptTemplate.from_messages(
-        [("system", SYSTEM_PROMPT), ("human", HUMAN_PROMPT)]
+        [("system", system_prompt), ("human", human_prompt)]
     )
 
 
